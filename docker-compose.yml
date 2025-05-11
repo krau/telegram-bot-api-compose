@@ -1,6 +1,6 @@
 services:
   api:
-    restart: always
+    restart: unless-stopped
     image: aiogram/telegram-bot-api:latest
     environment:
       TELEGRAM_API_ID: "1025907"
@@ -12,7 +12,7 @@ services:
       - ./data:/var/lib/telegram-bot-api
 
   nginx:
-    restart: always
+    restart: unless-stopped
     image: nginx:latest
     volumes:
       - ./nginx:/etc/nginx/conf.d
