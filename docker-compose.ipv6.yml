@@ -1,0 +1,39 @@
+services:
+  api:
+    restart: unless-stopped
+    image: aiogram/telegram-bot-api:latest
+    environment:
+      TELEGRAM_API_ID: "1025907"
+      TELEGRAM_API_HASH: "452b0359b988148995f22ff0f4229750"
+      TELEGRAM_STAT: 1
+      TELEGRAM_VERBOSITY: 1
+      TELEGRAM_LOCAL: 1
+    volumes:
+      - ./data:/var/lib/telegram-bot-api
+    networks:
+      - internal_v4
+      - tg_network
+
+  nginx:
+    restart: unless-stopped
+    image: nginx:latest
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./data:/var/lib/telegram-bot-api
+    ports:
+      - "39288:80"
+    depends_on:
+      - api
+    networks:
+      - internal_v4
+
+networks:
+  internal_v4:
+    driver: bridge
+  tg_network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16 #如果已被占用更换一个
+        - subnet: fd00:abcd:1::/64 #如果已被占用更换一个
